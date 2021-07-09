@@ -5,71 +5,74 @@ import "./Token.sol";
 
 contract dBank {
 
-  //assign Token contract to variable
-  Token private token;
-  //add mappings
+    //assign Token contract to variable
+    Token private token;
+    //add mappings
+    mapping(address => uint) public etherBalanceOf;
+    mapping(address => uint) public depositStart;
+    mapping(address => bool) public isDeposited;
+    //add events
+    event Deposit(address indexed user, uint etherAmount, uint timeStart);
+    //pass as constructor argument deployed Token contract
+    constructor(Token _token) public {
+        token = _token;
+        //assign token deployed contract to variable
+    }
 
-  //add events
+    function deposit() payable public {
+        // check for msg.sender deposit status and deposited amount
+        require(isDeposited[msg.sender] == false, 'Error, deposit already active');
+        require(msg.value >= 1e16, 'Error, deposit must be >= 0.01 ETH');
+        // assign variables
+        etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] + msg.value;
+        depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
+        isDeposited[msg.sender] = true;
+        // emit Deposit event
+        emit Deposit(msg.sender, msg.value, block.timestamp);
+    }
 
-  //pass as constructor argument deployed Token contract
-  constructor(Token _token) public {
-    token = _token;
-    //assign token deployed contract to variable
-  }
+    function withdraw() public {
+        //check if msg.sender deposit status is true
+        //assign msg.sender ether deposit balance to variable for event
 
-  function deposit() payable public {
-    //check if msg.sender didn't already deposited funds
-    //check if msg.value is >= than 0.01 ETH
+        //check user's hodl time
 
-    //increase msg.sender ether deposit balance
-    //start msg.sender hodling time
+        //calc interest per second
+        //calc accrued interest
 
-    //set msg.sender deposit status to true
-    //emit Deposit event
-  }
+        //send eth to user
+        //send interest in tokens to user
 
-  function withdraw() public {
-    //check if msg.sender deposit status is true
-    //assign msg.sender ether deposit balance to variable for event
+        //reset depositer data
 
-    //check user's hodl time
+        //emit event
+    }
 
-    //calc interest per second
-    //calc accrued interest
+    function borrow() payable public {
+        //check if collateral is >= than 0.01 ETH
+        //check if user doesn't have active loan
 
-    //send eth to user
-    //send interest in tokens to user
+        //add msg.value to ether collateral
 
-    //reset depositer data
+        //calc tokens amount to mint, 50% of msg.value
 
-    //emit event
-  }
+        //mint&send tokens to user
 
-  function borrow() payable public {
-    //check if collateral is >= than 0.01 ETH
-    //check if user doesn't have active loan
+        //activate borrower's loan status
 
-    //add msg.value to ether collateral
+        //emit event
+    }
 
-    //calc tokens amount to mint, 50% of msg.value
+    function payOff() public {
+        //check if loan is active
+        //transfer tokens from user back to the contract
 
-    //mint&send tokens to user
+        //calc fee
 
-    //activate borrower's loan status
+        //send user's collateral minus fee
 
-    //emit event
-  }
+        //reset borrower's data
 
-  function payOff() public {
-    //check if loan is active
-    //transfer tokens from user back to the contract
-
-    //calc fee
-
-    //send user's collateral minus fee
-
-    //reset borrower's data
-
-    //emit event
-  }
+        //emit event
+    }
 }
